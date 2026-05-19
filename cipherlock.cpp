@@ -13,12 +13,12 @@ string encrypt(string text, int key){
 
     for(char &ch : text){
 
-        // Uppercase letters
+        // Encrypt uppercase letters
         if(ch >= 'A' && ch <= 'Z'){
             ch = ((ch - 'A' + key) % 26) + 'A';
         }
 
-        // Lowercase letters
+        // Encrypt lowercase letters
         else if(ch >= 'a' && ch <= 'z'){
             ch = ((ch - 'a' + key) % 26) + 'a';
         }
@@ -36,12 +36,12 @@ string decrypt(string text, int key){
 
     for(char &ch : text){
 
-        // Uppercase letters
+        // Decrypt uppercase letters
         if(ch >= 'A' && ch <= 'Z'){
             ch = ((ch - 'A' - key + 26) % 26) + 'A';
         }
 
-        // Lowercase letters
+        // Decrypt lowercase letters
         else if(ch >= 'a' && ch <= 'z'){
             ch = ((ch - 'a' - key + 26) % 26) + 'a';
         }
@@ -51,11 +51,37 @@ string decrypt(string text, int key){
 }
 
 
+// ================= READ FILE FUNCTION =================
+
+string readFile(string filename){
+
+    ifstream file(filename);
+
+    string data = "";
+    string line;
+
+    if(file.is_open()){
+
+        while(getline(file, line)){
+            data += line + '\n';
+        }
+
+        file.close();
+    }
+
+    else{
+        cout << "File could not be opened!" << endl;
+    }
+
+    return data;
+}
+
+
 // ================= SAVE FILE FUNCTION =================
 
-void saveFile(string data){
+void saveFile(string filename, string data){
 
-    ofstream file("encrypted.txt");
+    ofstream file(filename);
 
     if(file.is_open()){
 
@@ -63,11 +89,11 @@ void saveFile(string data){
 
         file.close();
 
-        cout << "Data saved in encrypted.txt" << endl;
+        cout << "Data saved successfully in " << filename << endl;
     }
 
     else{
-        cout << "File could not be opened!" << endl;
+        cout << "File could not be created!" << endl;
     }
 }
 
@@ -76,59 +102,102 @@ void saveFile(string data){
 
 int main(){
 
-    int choice;
+    while(true){
 
-    cout << "===== CIPHER LOCK =====" << endl;
-    cout << "1. Encrypt Text" << endl;
-    cout << "2. Decrypt Text" << endl;
-    cout << "3. Exit" << endl;
+        int choice;
 
-    cout << "Enter your choice: ";
-    cin >> choice;
+        cout << endl;
+        cout << "========== CIPHER LOCK ==========" << endl;
+        cout << "1. Encrypt File" << endl;
+        cout << "2. Decrypt File" << endl;
+        cout << "3. Exit" << endl;
 
-    cin.ignore();
+        cout << "Enter your choice: ";
+        cin >> choice;
 
-    if(choice == 1){
+        cin.ignore();
 
-        string text;
-        int key;
+        // ================= ENCRYPT =================
 
-        cout << "Enter text to encrypt: " << endl;
-        getline(cin, text);
+        if(choice == 1){
 
-        cout << "Enter encryption key: ";
-        cin >> key;
+            string inputFile;
+            string outputFile;
+            int key;
 
-        string encrypted = encrypt(text, key);
+            cout << "Enter file name to encrypt: ";
+            getline(cin, inputFile);
 
-        cout << "Encrypted Text: " << encrypted << endl;
+            // Read file contents
+            string text = readFile(inputFile);
 
-        saveFile(encrypted);
-    }
+            cout << "Enter encryption key: ";
+            cin >> key;
 
-    else if(choice == 2){
+            cin.ignore();
 
-        string text;
-        int key;
+            // Encrypt file contents
+            string encrypted = encrypt(text, key);
 
-        cout << "Enter text to decrypt: " << endl;
-        getline(cin, text);
+            cout << endl;
+            cout << "Encrypted Text:" << endl;
+            cout << encrypted << endl;
 
-        cout << "Enter decryption key: ";
-        cin >> key;
+            cout << endl;
+            cout << "Enter output file name: ";
+            getline(cin, outputFile);
 
-        string decrypted = decrypt(text, key);
+            // Save encrypted data
+            saveFile(outputFile, encrypted);
+        }
 
-        cout << "Decrypted Text: " << decrypted << endl;
-    }
+        // ================= DECRYPT =================
 
-    else if(choice == 3){
+        else if(choice == 2){
 
-        cout << "Exiting Program..." << endl;
-    }
+            string inputFile;
+            string outputFile;
+            int key;
 
-    else{
-        cout << "Invalid Choice!" << endl;
+            cout << "Enter file name to decrypt: ";
+            getline(cin, inputFile);
+
+            // Read encrypted file
+            string text = readFile(inputFile);
+
+            cout << "Enter decryption key: ";
+            cin >> key;
+
+            cin.ignore();
+
+            // Decrypt text
+            string decrypted = decrypt(text, key);
+
+            cout << endl;
+            cout << "Decrypted Text:" << endl;
+            cout << decrypted << endl;
+
+            cout << endl;
+            cout << "Enter output file name: ";
+            getline(cin, outputFile);
+
+            // Save decrypted data
+            saveFile(outputFile, decrypted);
+        }
+
+        // ================= EXIT =================
+
+        else if(choice == 3){
+
+            cout << "Exiting Program..." << endl;
+            break;
+        }
+
+        // ================= INVALID INPUT =================
+
+        else{
+            cout << "Invalid Choice!" << endl;
+        }
     }
 
     return 0;
