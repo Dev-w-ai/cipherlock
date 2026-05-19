@@ -63,7 +63,12 @@ string readFile(string filename){
     if(file.is_open()){
 
         while(getline(file, line)){
-            data += line + '\n';
+
+            if(!data.empty()){
+                data += '\n';
+            }
+
+            data += line;
         }
 
         file.close();
